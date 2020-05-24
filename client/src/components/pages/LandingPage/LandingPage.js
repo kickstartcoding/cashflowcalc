@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { Link, Redirect } from 'react-router-dom'
 import { Button } from 'kc-react-widgets';
 
-
 import './LandingPage.css';
+
+const ENDPOINT = '/api/mongodb/cashflow/';
 
 function LandingPage() {
   const [isCreating, setIsCreating] = useState(false);
@@ -13,7 +14,7 @@ function LandingPage() {
     setIsCreating(true);
 
     const formData = {}; // empty for now
-    fetch('/api/mongodb/cashflow/', {
+    fetch(ENDPOINT, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(formData),
@@ -21,18 +22,19 @@ function LandingPage() {
       .then(response => response.json())
       .then(data => {
         setIsCreating(false);
-        console.log('Got this back', data);
+        // console.log('Data received:', data);
+
+        // Data came back, let's retrieve the database's ObjectID for this new
+        // object, and set that to state
         const dbId = data.results.insertedIds[0];
         setNewCashFlowId(dbId);
-
-        // Redirect to blog
-        //setCreatingStage(2);
-        //props.history.push('/blog/');
       });
   }
 
 
   if (newCashFlowId) {
+    // If we have gotten an ID for our new object, let's redirect to that page
+    // instead of rendering here
     const newUri = `/flow/${newCashFlowId}`;
     return (
       <Redirect to={newUri}/>
@@ -43,13 +45,19 @@ function LandingPage() {
     <div className="LandingPage">
       <header className="LandingPage-header">
         <p>Quickly calculate your personal or business finances.</p>
-        <Button
-            type="success"
-            size="gigantic"
-            depth="towering"
-            onClick={createNew}>
-          Start!
-        </Button>
+        {
+          isCreating ? (
+            'Creating...'
+          ) : (
+            <Button
+                type="success"
+                size="gigantic"
+                depth="towering"
+                onClick={createNew}>
+              Start!
+            </Button>
+          )
+        }
       </header>
     </div>
   );

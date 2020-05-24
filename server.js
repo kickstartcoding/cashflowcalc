@@ -8,7 +8,7 @@ app.use(express.json());
 // In order to keep the diff between this and the original server.js as small
 // as possible, we just have a "whitelisting" function for a minimal level of
 // security.  This just whitelists collection name, and that queries to always
-// need ID. This is as secure as a no-login-required app could get!
+// need hex. This is as secure as a no-login-required app could get!
 function checkQuery(collectionName, query = null) {
   // whitelist collection name
   if (collectionName !== 'cashflow') {
@@ -23,6 +23,15 @@ function checkQuery(collectionName, query = null) {
     throw new Error('_id required');
   }
   return {_id};
+
+  /*
+  // TODO: Switch to hex string, and generate a hex string here
+  const {hex} = query;
+  if (!hex) {
+    throw new Error('hex required');
+  }
+  return {hex};
+  */
 }
 
 

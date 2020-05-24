@@ -4,7 +4,7 @@ import { Link, Switch, Route } from 'react-router-dom'
 import './App.css';
 
 import LandingPage from './components/pages/LandingPage/LandingPage.js';
-import CashFlowPage from './components/pages/CashFlowPage/CashFlowPage.js';
+import CashFlow from './components/pages/CashFlow/CashFlow.js';
 
 function App () {
   return (
@@ -21,7 +21,7 @@ function App () {
       <div className="App-mainContent">
         <Switch>
           <Route exact path='/' component={LandingPage} />
-          <Route exact path='/flow/:objectId' component={CashFlowPage} />
+          <Route exact path='/flow/:objectId' component={CashFlow} />
         </Switch>
       </div>
 
