@@ -1,41 +1,64 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Button } from 'kc-react-widgets';
+import Calc from '../Calc/Calc.js';
 import './CalcList.css';
 
 function CalcList(props) {
-  const calcs = [
-    {
-      type: 'expense',
-      value: -2000,
-      interval: 7,
-      label: 'payroll for employees',
-    },
-    {
-      type: 'expense',
-      value: -3000,
-      interval: 30,
-      label: 'rent (oakland)',
-    },
-  ];
+  function create(type) {
+    const newItem = {
+      type, // (equivalent to "type": type)
+      value: 1000,
+      interval: 'monthly',
+      label: `New ${type}`,
+    };
+    props.onUpdate([
+      ...props.list,
+      newItem,
+    ]);
+  }
 
+  function createIncome() {
+    create('income');
+  }
+
+  function createExpense() {
+    create('expense');
+  }
+
+  function updateCalc(index, newData) {
+    const oldCalc = props.list[index]; // Get the current object for this item
+    const newCalc = {
+        ...oldCalc, // include the old values in the new object
+        ...newData, // update the value with the new given value
+    };
+    props.onUpdate([
+      ...props.list.slice(0, index), // include items before this one
+      newCalc, // include this item
+      ...props.list.slice(index + 1), // include items after
+    ]);
+  }
 
   return (
     <div className="CalcList">
-      calcs.map(calc => (
-        <div className="CalcList-calc">
-          <p>{calc.label}</p>
-          <p>{calc.type}</p>
-          <p>
-            <input
-              value={calc.value}
-              onChange={(ev) => onInputChange(calc, ev.target.value)}
-            /> per {calc.interval}
-          </p>
-        </div>
-      ));
+      <div className="CalcList-list">
+        {
+          props.list.map((calc, index) => (
+            <Calc
+              key={index}
+              onValueChange={value => updateCalc(index, {value})}
+              onIntervalChange={interval => updateCalc(index, {interval})}
+              {...calc}
+            />
+          ))
+        }
+      </div>
+
+      <div className="CalcList-buttonGroup">
+        <Button type="success" onClick={createIncome}>+ Income</Button>
+        <Button type="danger" onClick={createExpense}>+ Expense</Button>
+      </div>
     </div>
   );
 }
 
-
-
+export default CalcList;
