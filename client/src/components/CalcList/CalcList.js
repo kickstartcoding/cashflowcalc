@@ -8,7 +8,7 @@ function CalcList(props) {
     const newItem = {
       type, // (equivalent to "type": type)
       value: 1000,
-      interval: 'monthly',
+      interval: '30',
       label: `New ${type}`,
     };
     props.onUpdate([

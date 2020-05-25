@@ -35,7 +35,7 @@ function CashFlow(props) {
     fetch(url)
       .then(response => response.json())
       .then(data => {
-        console.log('Got data back', data);
+        //console.log('Got data back', data);
         const cashFlowData = Object.assign(
           {}, // start with empty
           getDefault(), // add in default values
@@ -75,7 +75,7 @@ function CashFlow(props) {
       </div>
       <div className="CashFlow-graph">
         <CashChart
-          data={data}
+          calcList={data.calcList}
         />
       </div>
     </div>
