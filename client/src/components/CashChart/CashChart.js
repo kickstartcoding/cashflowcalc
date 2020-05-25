@@ -38,8 +38,11 @@ function CashChart(props) {
   //const negiGraphData = graphData.map(({x, y}) => ({x, y: (y < 0 ? y : 0)}));
   const posiGraphData = graphData.filter(({y}) => y > 0);
   const negiGraphData = graphData.filter(({y}) => y < 0);
-  const lastItem = graphData[graphData.length - 1];
-  const animation = {duration: 500, easing: 'bounce'};
+  //const lastItem = graphData[graphData.length - 1];
+  //const animation = {duration: 500, easing: 'bounce'};
+  //const animation = {duration: 200};
+  const animation = undefined;
+  console.log('ength', graphData.length);
 
   return (
     <div className="CashChart">
@@ -58,6 +61,7 @@ function CashChart(props) {
         <VictoryChart
           theme={VictoryTheme.material}
           animate={animation}
+          containerComponent={<VictoryVoronoiContainer/>}
             >
           <VictoryArea
             style={{ data: { fill: 'lightgray', stroke: green } }}
@@ -87,83 +91,5 @@ function CashChart(props) {
     </div>
   );
 };
-
-
-function disabledCode() {
-  /*const [zoomDomain, setZoomDomain] = useState(null);
-  const [selectedDomain, setSelectedDomain] = useState(null);
-  */
-  let [zoomDomain, setZoomDomain] = [null, null];
-  let [selectedDomain, setSelectedDomain] = [null, null];
-  let props = null;
-
-
-  const graphData = generateDataArray(props.calcList);
-
-  const minY = Math.min(...graphData.map(({y}) => y));
-  const maxY = Math.max(...graphData.map(({y}) => y));
-  const today = new Date();
-
-
-  const tinyGraphTicks = [
-    new Date(2020, 1, 1),
-    new Date(2025, 1, 1),
-    new Date(2030, 1, 1),
-    new Date(2035, 1, 1),
-  ];
-
-  return (
-    <div className="CashChart">
-      <VictoryChart
-        width={550}
-        height={300}
-        scale={{x: "time"}}
-        animate={{ duration: 500 }}
-        containerComponent={
-          <VictoryZoomContainer
-            domain={{y: [minY, maxY]}}
-            zoomDimension="x"
-            zoomDomain={zoomDomain}
-            onZoomDomainChange={setZoomDomain}
-          />
-        }
-      >
-        {/*responsive={false}*/}
-        <VictoryLine
-          style={{
-            data: {stroke: "tomato"}
-          }}
-          data={graphData}
-        />
-
-      </VictoryChart>
-
-      <VictoryChart
-        width={550}
-        height={90}
-        scale={{x: "time"}}
-        padding={{top: 0, left: 50, right: 50, bottom: 30}}
-        containerComponent={
-          <VictoryBrushContainer
-            brushDimension="x"
-            brushDomain={selectedDomain}
-            onBrushDomainChange={setZoomDomain}
-          />
-        }
-      >
-        <VictoryAxis
-          tickValues={tinyGraphTicks}
-          tickFormat={(x) => new Date(x).getFullYear()}
-        />
-        <VictoryLine
-          style={{
-            data: {stroke: "tomato"}
-          }}
-          data={graphData}
-        />
-      </VictoryChart>
-    </div>
-  );
-}
 
 export default CashChart;

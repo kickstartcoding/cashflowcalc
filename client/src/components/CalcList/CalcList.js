@@ -47,6 +47,7 @@ function CalcList(props) {
               key={index}
               onValueChange={value => updateCalc(index, {value})}
               onIntervalChange={interval => updateCalc(index, {interval})}
+              onLabelChange={label => updateCalc(index, {label})}
               {...calc}
             />
           ))

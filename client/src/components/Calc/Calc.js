@@ -28,17 +28,19 @@ function Calc(props) {
   }
   return (
     <div className="Calc" style={style}>
-      <p className="Calc-label">{props.label}</p>
+      <p className="Calc-label">
+        <input
+          value={props.label}
+          onChange={ev => props.onLabelChange(ev.target.value)} />
+      </p>
       <p className="Calc-type">{props.type}</p>
       <p className="Calc-value">
         <input
           value={props.value}
-          type="number"
-          onChange={ev => props.onValueChange(ev.target.value)}
+          onChange={ev => onValueChange(ev.target.value)}
         /> per <input
           value={props.interval}
-          type="number"
-          onChange={ev => props.onIntervalChange(ev.target.value)}
+          onChange={ev => onIntervalChange(ev.target.value)}
         />
       </p>
     </div>

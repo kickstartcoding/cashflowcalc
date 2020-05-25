@@ -1,4 +1,4 @@
-import { addDays, addYears, addMonths, differenceInCalendarDays } from 'date-fns';
+import { addDays, addYears, addMonths, differenceInCalendarDays, format, formatRelative } from 'date-fns';
 
 
 export function numberFormatter(num) {
@@ -26,7 +26,7 @@ export function numberFormatter(num) {
 }
 
 export function dateFormatter(date) {
-  return new Date(date).toLocaleString('en-us', { month: 'short' });
+  return format(date, 'LLL');
 }
 
 
@@ -42,8 +42,9 @@ export function generateDateArray(start, end = null, step = null) {
   return dates;
 }
 
-export function formatLabel(date, value, label) {
-  return `${value} for ${label}`;
+export function formatLabel(date, money, value, label) {
+  return `$${numberFormatter(money)} | ${format(date, 'LLL mo')}\n` +
+    `$${numberFormatter(value)} (${label})`;
 }
 
 export function generateDataArray(calcList,  startingMoney, end) {
@@ -64,9 +65,10 @@ export function generateDataArray(calcList,  startingMoney, end) {
     transactions.push(...calcResults)
   }
 
-  // Sort by date (the 0th item)
+  // Reverse sort by value, sort by date
+  transactions.sort((a, b) => b[1] - a[1]);
   transactions.sort((a, b) => a[0] - b[0]);
-  console.log('transactions', transactions);
+  //console.log('transactions', transactions);
   const results = [];
   let money = 0;
   for (const [date, value, label] of transactions) {
@@ -74,7 +76,7 @@ export function generateDataArray(calcList,  startingMoney, end) {
     results.push({
       x: date,
       y: money,
-      label: formatLabel(date, value, label),
+      label: formatLabel(date, money, value, label),
     });
   }
 
