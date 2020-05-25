@@ -31,18 +31,23 @@ const monthRanges = [
 ];
 
 function CashChart(props) {
-  const [monthRange, setMonthRange] = useState(6);
+  const [monthRange, setMonthRange] = useState(3);
   const startMoney = props.startingCash || 10000;
   const graphData = generateDataArray(props.calcList, startMoney, monthRange);
   //const posiGraphData = graphData.map(({x, y}) => ({x, y: (y > 0 ? y : 0)}));
   //const negiGraphData = graphData.map(({x, y}) => ({x, y: (y < 0 ? y : 0)}));
-  const posiGraphData = graphData.filter(({y}) => y > 0);
-  const negiGraphData = graphData.filter(({y}) => y < 0);
-  //const lastItem = graphData[graphData.length - 1];
+  //const posiGraphData = graphData.filter(({y}) => y > 0);
+  //const negiGraphData = graphData.filter(({y}) => y < 0);
   //const animation = {duration: 500, easing: 'bounce'};
   //const animation = {duration: 200};
   const animation = undefined;
   console.log('ength', graphData.length);
+
+  // If it's generally going "down", then use red as the color, otherwise use
+  // green
+  const firstValue = graphData[0].y;
+  const lastValue = graphData[graphData.length - 1].y;
+  const color = firstValue > lastValue ? red : green;
 
   return (
     <div className="CashChart">
@@ -63,15 +68,25 @@ function CashChart(props) {
           animate={animation}
           containerComponent={<VictoryVoronoiContainer/>}
             >
+          {/*
           <VictoryArea
             style={{ data: { fill: 'lightgray', stroke: green } }}
             data={posiGraphData}
             labelComponent={<VictoryTooltip/>}
+            interpolation={'stepAfter'}
           />
           <VictoryArea
             style={{ data: { fill: 'lightgray', stroke: red } }}
             data={negiGraphData}
             labelComponent={<VictoryTooltip/>}
+            interpolation={'stepAfter'}
+          />
+          */}
+          <VictoryArea
+            style={{ data: { fill: 'lightgray', stroke: color } }}
+            data={graphData}
+            labelComponent={<VictoryTooltip/>}
+            interpolation={'stepAfter'}
           />
           <VictoryAxis
             fixLabelOverlap

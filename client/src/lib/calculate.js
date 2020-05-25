@@ -30,13 +30,12 @@ export function dateFormatter(date) {
 }
 
 
-export function generateDateArray(start, end = null, step = null) {
+export function generateDateArray(start, end, step) {
   const dates = [];
   let date = start;
-  const stepDays = step || end || 7;
-  const endDate = addMonths(date, end || 12);
+  const endDate = addMonths(date, end);
   while (date < endDate) {
-    date = addDays(date, stepDays);
+    date = addDays(date, step);
     dates.push(date);
   }
   return dates;
@@ -47,10 +46,12 @@ export function formatLabel(date, money, value, label) {
     `$${numberFormatter(value)} (${label})`;
 }
 
-export function generateDataArray(calcList,  startingMoney, end) {
+
+
+export function generateTransactionArray(calcList,  startingValue, end) {
   const today = new Date();
   const transactions = [
-    [today, startingMoney],
+    [today, startingValue, 'Starting cash'],
   ];
 
   // Create "transactions" for each calculation
@@ -61,13 +62,21 @@ export function generateDataArray(calcList,  startingMoney, end) {
       continue;
     }
     const dates = generateDateArray(today, end, interval);
-    const calcResults = dates.map(date => [date, value, label]);
-    transactions.push(...calcResults)
+    for (const date of dates) {
+      // For each date that a transaction should occur on, push the date, value
+      // of the transaction, and its label
+      transactions.push([date, value, label]);
+    }
   }
 
   // Reverse sort by value, sort by date
   transactions.sort((a, b) => b[1] - a[1]);
   transactions.sort((a, b) => a[0] - b[0]);
+  return transactions;
+}
+
+export function generateDataArray(calcList,  startingValue, end) {
+  const transactions = generateTransactionArray(calcList, startingValue, end);
   //console.log('transactions', transactions);
   const results = [];
   let money = 0;
@@ -79,7 +88,6 @@ export function generateDataArray(calcList,  startingMoney, end) {
       label: formatLabel(date, money, value, label),
     });
   }
-
   return results;
 }
 
