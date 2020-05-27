@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from 'kc-react-widgets';
+import { Button, Input } from 'kc-react-widgets';
 import './Calc.css';
 
 
@@ -29,16 +29,16 @@ function Calc(props) {
   return (
     <div className="Calc" style={style}>
       <p className="Calc-label">
-        <input
+        <Input
           value={props.label}
           onChange={ev => props.onLabelChange(ev.target.value)} />
       </p>
       <p className="Calc-type">{props.type}</p>
       <p className="Calc-value">
-        <input
+        <Input
           value={props.value}
           onChange={ev => onValueChange(ev.target.value)}
-        /> per <input
+        /> per <Input
           value={props.interval}
           onChange={ev => onIntervalChange(ev.target.value)}
         />

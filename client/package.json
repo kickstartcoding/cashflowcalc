@@ -4,8 +4,8 @@
   "private": true,
   "proxy": "http://localhost:8080",
   "dependencies": {
-    "date-fns": "^2.14.0",
-    "kc-react-widgets": "1.0.5",
+    "date-fns": "2.14.0",
+    "kc-react-widgets": "1.1.1",
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-router-dom": "5.0.1",
