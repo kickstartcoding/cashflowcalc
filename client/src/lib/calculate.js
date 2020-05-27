@@ -1,4 +1,12 @@
-import { addDays, addYears, addMonths, differenceInCalendarDays, format, formatRelative } from 'date-fns';
+import {
+  addDays,
+  addWeeks,
+  addYears,
+  addMonths,
+  differenceInCalendarDays,
+  format,
+  formatRelative,
+} from 'date-fns';
 
 
 export function numberFormatter(num) {
@@ -30,12 +38,22 @@ export function dateFormatter(date) {
 }
 
 
-export function generateDateArray(start, end, step) {
+export function generateDateArray(start, end, step, intervalUnit) {
   const dates = [];
   let date = start;
+  const addFunction = {
+    'days': addDays,
+    'weeks': addWeeks,
+    'months': addMonths,
+  }[intervalUnit];
+
+  if (!addFunction) {
+    throw new Error("Invalid interval unit");
+  }
+
   const endDate = addMonths(date, end);
   while (date < endDate) {
-    date = addDays(date, step);
+    date = addFunction(date, step);
     dates.push(date);
   }
   return dates;
@@ -56,12 +74,12 @@ export function generateTransactionArray(calcList,  startingValue, end) {
 
   // Create "transactions" for each calculation
   for (const calc of calcList) {
-    const {interval, value, label} = calc;
+    const {interval, value, label, intervalUnit} = calc;
     if (interval < 1) {
       // No < 1 intervals allowed (less than a day)
       continue;
     }
-    const dates = generateDateArray(today, end, interval);
+    const dates = generateDateArray(today, end, interval, intervalUnit);
     for (const date of dates) {
       // For each date that a transaction should occur on, push the date, value
       // of the transaction, and its label

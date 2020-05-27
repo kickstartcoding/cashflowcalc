@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from 'kc-react-widgets';
 import {
   generateDataArray,
@@ -30,24 +30,39 @@ const monthRanges = [
   {text: '3 Yr', value: 36},
 ];
 
+let timeout;
+
+const DEBOUNCE_MS = 400;
+
 function CashChart(props) {
+  const [updatedData, setUpdatedData] = useState([]);
   const [monthRange, setMonthRange] = useState(3);
   const startMoney = props.startingCash || 10000;
-  const graphData = generateDataArray(props.calcList, startMoney, monthRange);
-  //const posiGraphData = graphData.map(({x, y}) => ({x, y: (y > 0 ? y : 0)}));
-  //const negiGraphData = graphData.map(({x, y}) => ({x, y: (y < 0 ? y : 0)}));
-  //const posiGraphData = graphData.filter(({y}) => y > 0);
-  //const negiGraphData = graphData.filter(({y}) => y < 0);
-  //const animation = {duration: 500, easing: 'bounce'};
-  //const animation = {duration: 200};
-  const animation = undefined;
+  let animation = undefined;
+  const graphData = updatedData;
   console.log('ength', graphData.length);
 
   // If it's generally going "down", then use red as the color, otherwise use
   // green
-  const firstValue = graphData[0].y;
-  const lastValue = graphData[graphData.length - 1].y;
+  let firstValue = 0;
+  let lastValue = 0;
+  if (graphData.length) {
+    firstValue = graphData[0].y;
+    lastValue = graphData[graphData.length - 1].y;
+  }
   const color = firstValue > lastValue ? red : green;
+
+
+  // Debounce updating the graph, since this is the slowest part
+  function updateDataFromProps() {
+    const graphData = generateDataArray(props.calcList, startMoney, monthRange);
+    setUpdatedData(graphData);
+  }
+  useEffect(() => {
+    clearTimeout(timeout);
+    timeout = setTimeout(updateDataFromProps, DEBOUNCE_MS);
+  }, [props.calcList, monthRange]);
+
 
   return (
     <div className="CashChart">
@@ -64,10 +79,10 @@ function CashChart(props) {
         }
       </div>
         <VictoryChart
-          theme={VictoryTheme.material}
-          animate={animation}
-          containerComponent={<VictoryVoronoiContainer/>}
-            >
+            theme={VictoryTheme.material}
+            animate={animation}
+            containerComponent={<VictoryVoronoiContainer/>}
+          >
           {/*
           <VictoryArea
             style={{ data: { fill: 'lightgray', stroke: green } }}
@@ -88,17 +103,12 @@ function CashChart(props) {
             labelComponent={<VictoryTooltip/>}
             interpolation={'stepAfter'}
           />
-          <VictoryAxis
-            fixLabelOverlap
-            crossAxis
+          <VictoryAxis fixLabelOverlap crossAxis
             scale="time"
             tickFormat={dateFormatter}
             standalone={false}
           />
-          <VictoryAxis
-            fixLabelOverlap
-            dependentAxis
-            crossAxis
+          <VictoryAxis fixLabelOverlap dependentAxis crossAxis
             tickFormat={numberFormatter}
             standalone={false}
           />

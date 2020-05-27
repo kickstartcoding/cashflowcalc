@@ -1,10 +1,10 @@
 .CalcList {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 .CalcList-buttonGroup {
-    display: flex;
-    flex-direction: row;
-    justify-contents: stretch;
+  display: flex;
+  flex-direction: row;
+  justify-contents: stretch;
 }

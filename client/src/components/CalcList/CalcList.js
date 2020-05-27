@@ -1,14 +1,17 @@
-import React from 'react';
-import { Button } from 'kc-react-widgets';
+import React, {useState} from 'react';
+import { Button, Card, Input } from 'kc-react-widgets';
 import Calc from '../Calc/Calc.js';
 import './CalcList.css';
 
 function CalcList(props) {
+  const [showDropdown, setShowDropdown] = useState(null);
+
   function create(type) {
     const newItem = {
       type, // (equivalent to "type": type)
       value: 1000,
-      interval: '30',
+      interval: '1',
+      intervalUnit: 'months',
       label: `New ${type}`,
     };
     props.onUpdate([
@@ -38,6 +41,15 @@ function CalcList(props) {
     ]);
   }
 
+
+  function toggleDropdown(index) {
+    if (index === showDropdown) {
+      setShowDropdown(null); // show no dropdown
+    } else {
+      setShowDropdown(index); // show this dropdown
+    }
+  }
+
   return (
     <div className="CalcList">
       <div className="CalcList-list">
@@ -45,9 +57,15 @@ function CalcList(props) {
           props.list.map((calc, index) => (
             <Calc
               key={index}
+              sortId={index}
+              onSortItems={newList => props.onUpdate(newList)}
+              items={props.list}
               onValueChange={value => updateCalc(index, {value})}
               onIntervalChange={interval => updateCalc(index, {interval})}
+              onIntervalUnitChange={intervalUnit => updateCalc(index, {intervalUnit})}
               onLabelChange={label => updateCalc(index, {label})}
+              onShowDropdown={() => toggleDropdown(index)}
+              isDropdownShown={index === showDropdown}
               {...calc}
             />
           ))

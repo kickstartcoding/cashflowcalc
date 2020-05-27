@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom'
-import { Button } from 'kc-react-widgets';
+import { Card } from 'kc-react-widgets';
 import CalcList from '../../CalcList/CalcList.js';
 import CashChart from '../../CashChart/CashChart.js';
 import './CashFlow.css';
@@ -14,12 +14,14 @@ function getDefault() {
         type: 'expense',
         value: -2000,
         interval: 7,
+        intervalUnit: 'days',
         label: 'payroll for employees',
       },
       {
         type: 'expense',
         value: -3000,
         interval: 30,
+        intervalUnit: 'days',
         label: 'rent (oakland)',
       },
     ]
@@ -74,9 +76,11 @@ function CashFlow(props) {
         />
       </div>
       <div className="CashFlow-graph">
-        <CashChart
-          calcList={data.calcList}
-        />
+        <Card depth="towering">
+          <CashChart
+            calcList={data.calcList}
+          />
+        </Card>
       </div>
     </div>
   );
