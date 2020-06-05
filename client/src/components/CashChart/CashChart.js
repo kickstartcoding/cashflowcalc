@@ -39,7 +39,6 @@ function CashChart(props) {
   const [monthRange, setMonthRange] = useState(3);
   let animation = undefined;
   const graphData = updatedData;
-  console.log('ength', graphData.length);
 
   // If it's generally going "down", then use red as the color, otherwise use
   // green

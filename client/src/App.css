@@ -1,9 +1,13 @@
-/*@import url('https://fonts.googleapis.com/css2?family=Quicksand&display=swap');*/
 @import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap');
+
+body {
+    background: url('./assets/prism.png');
+}
 
 .App,
 .kc-Button,
-.kc-Input {
+.kc-Input,
+.kc-Card {
   font-family: 'Nanum Gothic', sans-serif;
 }
 

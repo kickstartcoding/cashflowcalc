@@ -9,6 +9,9 @@ import './CashFlow.css';
 
 const ENDPOINT = '/api/mongodb/cashflow/';
 
+const DEBOUNCE_MS = 5000; // whenever they stop editing for more than 5 seconds, save
+let timeout = null;
+
 function getDefault() {
   return {
     calcList: [
@@ -78,6 +81,23 @@ function CashFlow(props) {
       });
   }
 
+  function updateDatabase() {
+    const fetchOptions = {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(data),
+    };
+    const url = `${ENDPOINT}?hex=${hex}`;
+    fetch(url, fetchOptions)
+      .then(response => response.json())
+      .then(data => {
+        console.log('Save successful', data);
+      })
+      .catch(err => {
+        notify.show('Could not save. Check your connection?');
+      });
+  }
+
   function onUpdateList(newList) {
     // Update the data state variable to include the new calcList, which will
     // have this item added to the end
@@ -86,6 +106,15 @@ function CashFlow(props) {
       calcList: newList,
     });
   }
+
+  // Whenever the backend data gets changed, we'll save it to the backend. This
+  // clearTimeout and setTimeout causes this to be "debounced", or only occur
+  // when changes pause for longer than a certain amount of time (otherwise it
+  // might save literally every key stroke, as an example)
+  useEffect(() => {
+    clearTimeout(timeout);
+    timeout = setTimeout(updateDatabase, DEBOUNCE_MS);
+  }, [data]);
 
   // Load data immediately
   useEffect(getData, []);

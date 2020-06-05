@@ -22,9 +22,10 @@ trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
 # Get the back-end running in the background
 ./node_modules/.bin/nodemon server.js &
 
-# XXX Misc hacky settings -- delete
-export BROWSER=none
-export DANGEROUSLY_DISABLE_HOST_CHECK="true"
+# Dev settings: Disable browser from auto-starting, and allow access from other
+# computers during development
+#export BROWSER=none
+#export DANGEROUSLY_DISABLE_HOST_CHECK="true"
 
 # Go into client directory and get frontend running
 cd client/
