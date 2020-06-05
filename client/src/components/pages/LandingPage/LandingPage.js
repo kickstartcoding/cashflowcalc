@@ -1,6 +1,10 @@
+/*
+  This is the first page in the app. It describes the application, and offers a
+  big inviting button to get you going.
+*/
 import React, { useState } from 'react';
 import { notify } from 'react-notify-toast';
-import { Link, Redirect } from 'react-router-dom'
+import { Redirect } from 'react-router-dom'
 import { Button } from 'kc-react-widgets';
 import { MdShowChart } from 'react-icons/md';
 
@@ -10,38 +14,45 @@ import logo from '../../NavBar/logo.png';
 const ENDPOINT = '/api/mongodb/cashflow/';
 
 function LandingPage() {
+  // isCreating is used to prevent accidental "double clicks"
   const [isCreating, setIsCreating] = useState(false);
+
+  // newCashFlowHex is set to indicate we successfully created a new cash flow,
+  // and have gotten the hexadecimal ID for it.
   const [newCashFlowHex, setNewCashFlowHex] = useState(null);
 
   function createNew() {
     if (isCreating) {
-      // Already in the process of creating a new one, don't show
-      return;
+      return; // Already clicked, prevent double click
     }
     setIsCreating(true);
     notify.show('Creating a brand new chart just for you!');
 
-    const formData = {}; // empty for now
-    fetch(ENDPOINT, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(formData),
-      })
+    // This starts the new database document off as an empty object. This could
+    // have been the default or initial values here, but the way this
+    // application chose to do it is in the CashFlow page it gives it defaults.
+    const formData = {};
+    const fetchOptions = {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(formData),
+    };
+    fetch(ENDPOINT, fetchOptions)
       .then(response => response.json())
       .then(data => {
         setIsCreating(false);
         // console.log('Data received:', data);
 
-        // Data came back, let's retrieve the database's ObjectID for this new
-        // object, and set that to state
+        // The data.results.ops array contains the successfully created data.
+        // In this case, it also contains a "hex value" that was created on the
+        // backend and inserted into the document.
         const hex = data.results.ops[0].hex;
-        console.log('data results', hex);
         setNewCashFlowHex(hex);
       })
       .catch(err => {
-        console.log('Error:', err);
+        // Connection issue, or backend server down: Notify the user
         setIsCreating(false);
-        notify.hide();
+        notify.hide(); // hide existing notifications
         notify.show('An error occurred while creating your chart, try again later.');
       });
   }
@@ -59,7 +70,7 @@ function LandingPage() {
   return (
     <div className="LandingPage">
       <header className="LandingPage-header">
-        <img src={logo} className="LandingPage-logo" />
+        <img src={logo} className="LandingPage-logo" alt="Cash Flow Calc" />
         <h1>Cash Flow Calc</h1>
         <p>Quickly chart your personal or business finances.</p>
 

@@ -1,9 +1,8 @@
 import React, {useState} from 'react';
-import { Button, Card, Input } from 'kc-react-widgets';
+import { Button } from 'kc-react-widgets';
 import Calc from '../Calc/Calc.js';
 import './CalcList.css';
 import { MdAddBox } from "react-icons/md";
-
 
 function CalcList(props) {
   const [showDropdown, setShowDropdown] = useState(null);

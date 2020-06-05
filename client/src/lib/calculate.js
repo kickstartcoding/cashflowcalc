@@ -1,14 +1,15 @@
 import {
   addDays,
   addWeeks,
-  addYears,
   addMonths,
-  differenceInCalendarDays,
   format,
-  formatRelative,
 } from 'date-fns';
 
 
+/*
+  Given a Number, format and round the number using K, M, or B as abbreviations
+  for thousand, million, or billion (e.g. 10056 becomes "10k")
+*/
 export function numberFormatter(num) {
   // thanks to: https://stackoverflow.com/a/9462382
   const absNum = Math.abs(num);
@@ -34,11 +35,18 @@ export function numberFormatter(num) {
 }
 
 export function dateFormatter(date) {
+  // Format a date with a month abbreviation
   return format(date, 'LLL');
 }
 
 
-export function generateDateArray(start, end, step, intervalUnit) {
+
+/*
+  Given a start date, a date to end by, and an interval and units (e.g. every 3
+  weeks), generate an array with a date for each day that a particular
+  recurring transaction will occur on.
+*/
+export function generateDateArray(start, end, interval, intervalUnit) {
   const dates = [];
   let date = start;
   const addFunction = {
@@ -53,26 +61,31 @@ export function generateDateArray(start, end, step, intervalUnit) {
 
   const endDate = addMonths(date, end);
   while (date < endDate) {
-    date = addFunction(date, step);
+    date = addFunction(date, interval);
     dates.push(date);
   }
   return dates;
 }
 
 /*
-// A more extensive label formatter:
+// A more extensive label formatter that could be used instead:
 export function formatLabel(date, money, value, label) {
   return `$${numberFormatter(money)} | ${format(date, 'LLL mo')}\n` +
     `$${numberFormatter(value)} (${label})`;
 }
 */
 
+/* Format a graph label */
 export function formatLabel(date, money, value, label) {
   return `$${numberFormatter(money)}`;
 }
 
 
-
+/*
+  Given an array of recurring transaction descriptions (calcList), and a date
+  to end by, this will generate an array of the individual transactions, each
+  transaction an array in the format of `[date, value, description]`
+*/
 export function generateTransactionArray(calcList, end) {
   const today = new Date();
   const transactions = [];
@@ -108,9 +121,15 @@ export function generateTransactionArray(calcList, end) {
   return transactions;
 }
 
-export function generateDataArray(calcList,  startingValue, end) {
-  const transactions = generateTransactionArray(calcList, startingValue, end);
-  // console.log('transactions', transactions);
+
+/*
+  Given an array of recurring transaction descriptions (calcList), this will
+  generate an array of transactions, then step through and "apply" those
+  transactions to generate the resulting cash in the bank account at every step
+  in the format that VictoryCharts expects it.
+*/
+export function generateDataArray(calcList, end) {
+  const transactions = generateTransactionArray(calcList, end);
   const results = [];
   let money = 0;
   for (const [date, value, label] of transactions) {
@@ -123,19 +142,4 @@ export function generateDataArray(calcList,  startingValue, end) {
   }
   return results;
 }
-
-
-/*
-// Condense code:
-//const results = [];
-let money = 0;
-const byDate = {}; // collapse into a single object to remove duped days
-for (const [date, value] of transactions) {
-  money += value;
-  byDate[date] = money;
-}
-const condensedTransactions = Array.from(Object.entries(byDate));
-condensedTransactions.sort((a, b) => a[0] - b[0]);
-const results = condensedTransactions.map(([x, y]) => ({x, y}));
-*/
 

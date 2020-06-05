@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Button } from 'kc-react-widgets';
 import {
   generateDataArray,
-  generateDateArray,
   numberFormatter,
   dateFormatter,
 } from '../../lib/calculate.js';
@@ -11,10 +10,7 @@ import './CashChart.css';
 import {
   VictoryArea,
   VictoryChart,
-  VictoryLine,
   VictoryAxis,
-  VictoryZoomContainer,
-  VictoryBrushContainer,
   VictoryTheme,
   VictoryVoronoiContainer,
   VictoryTooltip,
@@ -30,35 +26,34 @@ const monthRanges = [
   {text: '3 Yr', value: 36},
 ];
 
+// Used to debounce updating the chart (see below)
 let timeout;
-
 const DEBOUNCE_MS = 400;
 
 function CashChart(props) {
-  const [updatedData, setUpdatedData] = useState([]);
+  const [chartData, setChartData] = useState([]);
   const [monthRange, setMonthRange] = useState(3);
-  let animation = undefined;
-  const graphData = updatedData;
 
   // If it's generally going "down", then use red as the color, otherwise use
   // green
   let firstValue = 0;
   let lastValue = 0;
-  if (graphData.length) {
-    firstValue = graphData[0].y;
-    lastValue = graphData[graphData.length - 1].y;
+  if (chartData.length) {
+    firstValue = chartData[0].y;
+    lastValue = chartData[chartData.length - 1].y;
   }
   const color = firstValue > lastValue ? red : green;
 
   // Debounce updating the graph, since this is the slowest part
-  function updateDataFromProps() {
-    const graphData = generateDataArray(props.calcList, monthRange);
-    setUpdatedData(graphData);
+  function updateChart() {
+    const newChartData = generateDataArray(props.calcList, monthRange);
+    setChartData(newChartData);
   }
-  useEffect(() => {
+  function debouncedUpdateChart() {
     clearTimeout(timeout);
-    timeout = setTimeout(updateDataFromProps, DEBOUNCE_MS);
-  }, [props.calcList, monthRange]);
+    timeout = setTimeout(updateChart, DEBOUNCE_MS);
+  }
+  useEffect(debouncedUpdateChart, [props.calcList, monthRange]);
 
 
   return (
@@ -76,41 +71,25 @@ function CashChart(props) {
           ))
         }
       </div>
-        <VictoryChart
-            theme={VictoryTheme.material}
-            animate={animation}
-            containerComponent={<VictoryVoronoiContainer/>}
-          >
-          {/*
-          <VictoryArea
-            style={{ data: { fill: 'lightgray', stroke: green } }}
-            data={posiGraphData}
-            labelComponent={<VictoryTooltip/>}
-            interpolation={'stepAfter'}
-          />
-          <VictoryArea
-            style={{ data: { fill: 'lightgray', stroke: red } }}
-            data={negiGraphData}
-            labelComponent={<VictoryTooltip/>}
-            interpolation={'stepAfter'}
-          />
-          */}
-          <VictoryArea
-            style={{ data: { fill: 'lightgray', stroke: color } }}
-            data={graphData}
-            labelComponent={<VictoryTooltip/>}
-            interpolation={'stepAfter'}
-          />
-          <VictoryAxis fixLabelOverlap crossAxis
-            scale="time"
-            tickFormat={dateFormatter}
-            standalone={false}
-          />
-          <VictoryAxis fixLabelOverlap dependentAxis crossAxis
-            tickFormat={numberFormatter}
-            standalone={false}
-          />
-        </VictoryChart>
+      <VictoryChart
+          theme={VictoryTheme.material}
+          containerComponent={<VictoryVoronoiContainer/>}>
+        <VictoryArea
+          style={{ data: { fill: 'lightgray', stroke: color } }}
+          data={chartData}
+          labelComponent={<VictoryTooltip/>}
+          interpolation={'stepAfter'}
+        />
+        <VictoryAxis fixLabelOverlap crossAxis
+          scale="time"
+          tickFormat={dateFormatter}
+          standalone={false}
+        />
+        <VictoryAxis fixLabelOverlap dependentAxis crossAxis
+          tickFormat={numberFormatter}
+          standalone={false}
+        />
+      </VictoryChart>
     </div>
   );
 };
