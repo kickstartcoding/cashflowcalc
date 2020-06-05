@@ -1,30 +1,24 @@
 import React from 'react';
 import { Link, Switch, Route } from 'react-router-dom'
+import Notifications, {notify} from 'react-notify-toast';
+
 
 import './App.css';
 
 import LandingPage from './components/pages/LandingPage/LandingPage.js';
 import CashFlow from './components/pages/CashFlow/CashFlow.js';
+import NavBar from './components/NavBar/NavBar.js';
 
 function App () {
   return (
     <div className="App">
-      <nav className="App-navigation">
-        <h1 className="App-title">Cash Flow Calc</h1>
-        {/*
-          <Link to="/">Welcome</Link>
-          <Link to="/blog/">Blog</Link>
-          <Link to="/write/">Write Article</Link>
-        */}
-      </nav>
-
+      <Notifications />
       <div className="App-mainContent">
         <Switch>
           <Route exact path='/' component={LandingPage} />
-          <Route exact path='/flow/:objectId' component={CashFlow} />
+          <Route exact path='/chart/:hex' component={CashFlow} />
         </Switch>
       </div>
-
     </div>
   );
 }

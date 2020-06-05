@@ -37,7 +37,6 @@ const DEBOUNCE_MS = 400;
 function CashChart(props) {
   const [updatedData, setUpdatedData] = useState([]);
   const [monthRange, setMonthRange] = useState(3);
-  const startMoney = props.startingCash || 10000;
   let animation = undefined;
   const graphData = updatedData;
   console.log('ength', graphData.length);
@@ -52,10 +51,9 @@ function CashChart(props) {
   }
   const color = firstValue > lastValue ? red : green;
 
-
   // Debounce updating the graph, since this is the slowest part
   function updateDataFromProps() {
-    const graphData = generateDataArray(props.calcList, startMoney, monthRange);
+    const graphData = generateDataArray(props.calcList, monthRange);
     setUpdatedData(graphData);
   }
   useEffect(() => {
@@ -70,6 +68,7 @@ function CashChart(props) {
         {
           monthRanges.map(item => (
             <Button
+                size="small"
                 key={item.value}
                 value={item.value === monthRange}
                 onClick={() => setMonthRange(item.value)}>

@@ -59,31 +59,46 @@ export function generateDateArray(start, end, step, intervalUnit) {
   return dates;
 }
 
+/*
+// A more extensive label formatter:
 export function formatLabel(date, money, value, label) {
   return `$${numberFormatter(money)} | ${format(date, 'LLL mo')}\n` +
     `$${numberFormatter(value)} (${label})`;
 }
+*/
+
+export function formatLabel(date, money, value, label) {
+  return `$${numberFormatter(money)}`;
+}
 
 
 
-export function generateTransactionArray(calcList,  startingValue, end) {
+export function generateTransactionArray(calcList, end) {
   const today = new Date();
-  const transactions = [
-    [today, startingValue, 'Starting cash'],
-  ];
+  const transactions = [];
 
   // Create "transactions" for each calculation
   for (const calc of calcList) {
-    const {interval, value, label, intervalUnit} = calc;
+    const {interval, value, type, label, intervalUnit} = calc;
+
+    // If it's an expense, make the effective value negative (subtracts)
+    const effectiveValue = type === 'expense' ? (0 - value) : value;
+
+    if (intervalUnit === 'once') {
+      transactions.push([new Date(), effectiveValue, label]);
+      continue;
+    }
+
     if (interval < 1) {
       // No < 1 intervals allowed (less than a day)
       continue;
     }
+
     const dates = generateDateArray(today, end, interval, intervalUnit);
     for (const date of dates) {
-      // For each date that a transaction should occur on, push the date, value
-      // of the transaction, and its label
-      transactions.push([date, value, label]);
+      // For each date that a transaction should occur on, push the date,
+      // effective value of the transaction, and its label
+      transactions.push([date, effectiveValue, label]);
     }
   }
 
@@ -95,7 +110,7 @@ export function generateTransactionArray(calcList,  startingValue, end) {
 
 export function generateDataArray(calcList,  startingValue, end) {
   const transactions = generateTransactionArray(calcList, startingValue, end);
-  //console.log('transactions', transactions);
+  // console.log('transactions', transactions);
   const results = [];
   let money = 0;
   for (const [date, value, label] of transactions) {

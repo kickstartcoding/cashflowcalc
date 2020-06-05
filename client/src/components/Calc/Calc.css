@@ -1,3 +1,13 @@
+.Calc-label {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+}
+.Calc-value {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
 /*
 .Calc {
   background: gray;

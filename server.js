@@ -5,33 +5,33 @@ const ObjectId = require('mongodb').ObjectId;
 const app = express();
 app.use(express.json());
 
-// In order to keep the diff between this and the original server.js as small
+// In order to keep the "diff" between this and the original server.js as small
 // as possible, we just have a "whitelisting" function for a minimal level of
 // security.  This just whitelists collection name, and that queries to always
 // need hex. This is as secure as a no-login-required app could get!
-function checkQuery(collectionName, query = null) {
+const HEX_LENGTH = 7;
+function getRandomHex() {
+  return Math.floor(Math.random() * 16**HEX_LENGTH).toString(16);
+}
+function checkQuery(collectionName, query, data = null) {
   // whitelist collection name
   if (collectionName !== 'cashflow') {
     throw new Error('Collection must be "cashflow"');
   }
-  if (!query) {
+
+  if (data !== null) {
+    data.hex = getRandomHex();
     return;
   }
 
-  const {_id} = query;
-  if (!_id) {
-    throw new Error('_id required');
-  }
-  return {_id};
-
-  /*
-  // TODO: Switch to hex string, and generate a hex string here
   const {hex} = query;
   if (!hex) {
     throw new Error('hex required');
   }
+  if (hex.length !== 7) {
+    throw new Error('hex invalid');
+  }
   return {hex};
-  */
 }
 
 
@@ -63,7 +63,7 @@ app.get('/api/mongodb/:collectionName/', (request, response) => {
 app.post('/api/mongodb/:collectionName/', (request, response) => {
   const collectionName = request.params.collectionName;
   const data = request.body;
-  checkQuery(collectionName); // Security
+  checkQuery(collectionName, null, data); // Security
 
   db.collection(collectionName)
     .insert(data, (err, results) => {

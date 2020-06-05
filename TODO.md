@@ -30,4 +30,4 @@
 - UX improvements
     - Guided tour? (If a react thing that's easy exists, MAYBE)
     - Dots showing when expenses / income occurs, possibly icons
-    - Showing 
+    - Showing

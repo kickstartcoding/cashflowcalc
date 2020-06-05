@@ -1,0 +1,37 @@
+.NavBar {
+  color: black;
+  grid-column: 1 / span 2;
+}
+
+.NavBar:hover {
+  z-index: 10;
+}
+
+.NavBar > .kc-Card {
+  display: flex;
+  /*justify-content: space-between;*/
+  align-items: center;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.NavBar-logo {
+  height: 60px;
+}
+
+.NavBar-title {
+  font-weight: 200;
+  font-size: 40px;
+}
+
+.NavBar-buttons {
+  margin-left: auto;
+}
+
+
+@media (max-width: 768px) {
+  .NavBar-buttons {
+    display: none; /* just hide the buttons on mobile since print and clipboard don't make sense anyway */
+  }
+}
+

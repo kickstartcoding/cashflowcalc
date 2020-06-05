@@ -1,10 +1,71 @@
 .CashFlow {
   display: grid;
   grid-template-columns: 350px 1fr;
+  grid-template-rows: 105px 1fr;
 }
 
 .CashFlow-sidebar {
 }
 
-.CashFlow-graph {
+.CashFlow-graph .kc-Card {
+  padding-bottom: 0;
+  padding-top: 0;
+}
+
+@media screen and (max-width: 768px) {
+  .CashFlow {
+    display: block;
+  }
+}
+
+
+@media print {
+  .CashFlow {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .Calc {
+    border: 3px solid #eee;
+    width: auto;
+    padding: 0;
+    margin: 0;
+    margin-left: 2px;
+  }
+  .Calc * {
+    padding: 0 !important;
+    margin: 0 !important;
+    font-size: 10.5pt !important;
+  }
+
+  .CashFlow-sidebar {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  .CalcList-list {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .CashChart {
+    grid-column: 1 !important;
+    grid-row: auto !important;
+  }
+
+  /* Hide all buttons and notifications */
+  .kc-Button,
+  #notification-wrapper {
+    display: none;
+  }
+
+  .kc-Card {
+    border: none;
+    box-shadow: none;
+    border-radius: none;
+  }
+  .kc-Input {
+    border: none;
+  }
 }
