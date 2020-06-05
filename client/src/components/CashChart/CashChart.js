@@ -1,10 +1,15 @@
+/*
+  CashChart actually displays the chart. It uses the helper functions in
+  src/lib/dataGeneration to create the chart's actual data based on the
+  calculation list, and then renders the chart using the VictoryChart library.
+*/
 import React, { useState, useEffect } from 'react';
 import { Button } from 'kc-react-widgets';
 import {
   generateDataArray,
-  numberFormatter,
-  dateFormatter,
-} from '../../lib/calculate.js';
+  generateTransactionArray,
+} from '../../lib/dataGeneration.js';
+import { numberFormatter, dateFormatter } from '../../lib/formatters.js';
 import './CashChart.css';
 
 import {
@@ -19,6 +24,7 @@ import {
 const red = 'tomato';
 const green = '#20DA33';
 
+// An array that holds the time range options
 const monthRanges = [
   {text: '3 Mo', value: 3},
   {text: '6 Mo', value: 6},
@@ -31,30 +37,36 @@ let timeout;
 const DEBOUNCE_MS = 400;
 
 function CashChart(props) {
+  // chartData is the data that will actually be shown in the chart (e.g. an
+  // array of cash quantities at different points of time)
   const [chartData, setChartData] = useState([]);
+
+  // The currently selected month range
   const [monthRange, setMonthRange] = useState(3);
 
-  // If it's generally going "down", then use red as the color, otherwise use
-  // green
-  let firstValue = 0;
-  let lastValue = 0;
-  if (chartData.length) {
-    firstValue = chartData[0].y;
-    lastValue = chartData[chartData.length - 1].y;
+  // If it starts higher than it ends, use red as the line color, else green
+  let color = green;
+  if (chartData.length && chartData[0].y > chartData[chartData.length - 1].y) {
+    color = red;
   }
-  const color = firstValue > lastValue ? red : green;
 
-  // Debounce updating the graph, since this is the slowest part
+  // The updateChart function actually causes the chart to refresh, by
+  // generating an array of transactions based on the user's list of
+  // calculations, and then using that to generate the actual data to be
+  // charted in the format Victory Charts expects
   function updateChart() {
-    const newChartData = generateDataArray(props.calcList, monthRange);
+    const transactions = generateTransactionArray(props.calcList, monthRange);
+    const newChartData = generateDataArray(transactions);
     setChartData(newChartData);
   }
+
+  // Debounce generating the data and updating the graph, since this is the
+  // slowest part and it happening "on every key-stroke" can be too much
   function debouncedUpdateChart() {
     clearTimeout(timeout);
     timeout = setTimeout(updateChart, DEBOUNCE_MS);
   }
   useEffect(debouncedUpdateChart, [props.calcList, monthRange]);
-
 
   return (
     <div className="CashChart">

@@ -9,7 +9,7 @@ function CalcList(props) {
 
   function create(type) {
     const newItem = {
-      type, // (equivalent to {"type": type})
+      type: type,
       value: 1000,
       interval: 1,
       intervalUnit: 'months',
@@ -29,10 +29,17 @@ function CalcList(props) {
     create('expense');
   }
 
+  /*
+    Update the calculation at the given index with the new data specified.
+    Example:
+              updateCalc(2, {interval: 10})
+    (Would set the item at props.list[2] to have interval 10 while keeping the
+    other values the same)
+  */
   function updateCalc(index, newData) {
-    const oldCalc = props.list[index]; // Get the current object for this item
+    const oldData = props.list[index]; // Get the current object for this item
     const newCalc = {
-        ...oldCalc, // include the old values in the new object
+        ...oldData, // include the old values in the new object
         ...newData, // update the value with the new given value
     };
     props.onUpdate([
@@ -40,14 +47,6 @@ function CalcList(props) {
       newCalc, // include this item
       ...props.list.slice(index + 1), // include items after
     ]);
-  }
-
-  function toggleDropdown(index) {
-    if (index === showDropdown) {
-      setShowDropdown(null); // show no dropdown
-    } else {
-      setShowDropdown(index); // show this dropdown
-    }
   }
 
   function deleteCalc(index) {
@@ -58,6 +57,17 @@ function CalcList(props) {
     setShowDropdown(null); // show no dropdown
   }
 
+  /*
+    This toggles the dropdown visibility at the given index
+  */
+  function toggleDropdown(index) {
+    if (index === showDropdown) {
+      setShowDropdown(null); // show no dropdown
+    } else {
+      setShowDropdown(index); // show this dropdown
+    }
+  }
+
   return (
     <div className="CalcList">
       <div className="CalcList-list">
@@ -65,17 +75,18 @@ function CalcList(props) {
           props.list.map((calc, index) => (
             <Calc
               key={index}
-              sortId={index}
-              onSortItems={newList => props.onUpdate(newList)}
-              items={props.list}
               onValueChange={value => updateCalc(index, {value})}
-              onIntervalChange={interval => updateCalc(index, {interval})}
-              onIntervalUnitChange={intervalUnit => updateCalc(index, {intervalUnit})}
+              onIntervalChange={(interval, intervalUnit) =>
+                updateCalc(index, {interval, intervalUnit})}
               onLabelChange={label => updateCalc(index, {label})}
               onShowDropdown={() => toggleDropdown(index)}
               onRemoveCalc={() => deleteCalc(index)}
               isDropdownShown={index === showDropdown}
-              {...calc}
+              type={calc.type}
+              value={calc.value}
+              interval={calc.interval}
+              intervalUnit={calc.intervalUnit}
+              label={calc.label}
             />
           ))
         }

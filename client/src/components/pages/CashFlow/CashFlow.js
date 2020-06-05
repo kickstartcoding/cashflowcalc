@@ -28,6 +28,7 @@ function getDefault() {
       {
         type: 'income',
         value: 1200,
+        interval: null,
         intervalUnit: 'once',
         label: 'Starting cash',
       },

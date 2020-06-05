@@ -15,7 +15,7 @@ import { MdEdit, MdDelete } from "react-icons/md";
   component represents to contain that interval and intervalUnit.
 */
 const intervalPresets = [
-  {text: 'Once', intervalUnit: 'once'},
+  {text: 'Once', intervalUnit: 'once', interval: null},
   {text: 'Daily', intervalUnit: 'days', interval: 1},
   {text: 'Weekly', intervalUnit: 'weeks', interval: 1},
   {text: 'Twice a month', intervalUnit: 'days', interval: 15},
@@ -44,11 +44,10 @@ function Calc(props) {
     }
   }
 
-  function selectPreset(preset) {
+  function choosePreset(preset) {
     // A preset has been selected in the dropdown. Apply the interval and its
     // unit of measure to the calc object underpinning this component.
-    props.onIntervalUnitChange(preset.intervalUnit);
-    props.onIntervalChange(preset.interval);
+    props.onIntervalChange(preset.interval, preset.intervalUnit);
     props.onShowDropdown(); // hide dropdown after selection
   }
 
@@ -65,7 +64,7 @@ function Calc(props) {
         </div>
         <div className="Calc-label">
           <Input
-            flat={true}
+            flat="flat"
             value={props.label}
             onChange={ev => props.onLabelChange(ev.target.value)} />
           <Card
@@ -77,7 +76,7 @@ function Calc(props) {
         </div>
         <div className="Calc-value">
           <Input
-            flat={true}
+            flat="flat"
             style={{ width: "100px" }}
             value={props.value}
             onChange={ev => onValueChange(ev.target.value)}
@@ -102,7 +101,7 @@ function Calc(props) {
             <Button
                 key={preset.text}
                 value={preset.text === selectedPreset.text}
-                onClick={() => selectPreset(preset)}>
+                onClick={() => choosePreset(preset)}>
               {preset.text}
             </Button>
           ))
