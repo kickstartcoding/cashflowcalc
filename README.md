@@ -8,8 +8,7 @@
   project.
 
 > This was original created for Kickstart Coding, the affordable, inclusive,
-> and intensive coding course teaching cutting-edge Python / Django and
-> JavaScript / React web development.
+
 > [Learn more and enroll here.](https://kickstartcoding.com/?utm_source=github&utm_campaign=cheatsheets)
 
 ## Usage
